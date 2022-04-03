@@ -20,6 +20,7 @@ class Lexer {
             while(getline(ifs, line)) {
                 vector<Token*> l;
                 stringstream ss(line);
+                vector<string> strings = getStrings(line);
                 string chunk;
                 string tokenContents;
                 while(ss >> chunk) {
@@ -28,7 +29,8 @@ class Lexer {
                         // cout << tokenContents << endl;
                     } else if(tokenContents.at(0) == '\"' && tokenContents.at(tokenContents.size()-1) == '\"') {
                         tokenContents = tokenContents.substr(1, tokenContents.length()-2);
-                        Token *t = new Token(tokenContents, astring);
+                        Token *t = new Token(strings.at(0), astring);
+                        // strings.erase(strings.begin()); ????????????????????
                         l.push_back(t);
                         tokenContents = "";
                     } else {
@@ -54,6 +56,25 @@ class Lexer {
                 data.push_back(l);
             }
             return data;
+        }
+
+        vector<string> getStrings(string txt) {
+            vector<string> list;
+            string curr;
+            bool inastring = false;
+            for(int i = 0; i < txt.length(); i++) {
+                if(txt.at(i) == '\"') {
+                    inastring = !inastring;
+                    if(!inastring) {
+                        list.push_back(curr);
+                        curr = "";
+                    }
+                }
+                else if(inastring) {
+                    curr += string(1, txt.at(i));
+                }
+            }
+            return list;
         }
     
 };

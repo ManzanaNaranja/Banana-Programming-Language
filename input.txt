@@ -3,8 +3,9 @@ LET Q = 'y'
 FOR A = 0 TO C
 FOR B = 0 TO 3
 PRINT B
+PRINT " "
 NEXT
 PRINT LINE
 PRINT A
 NEXT
-PRINT "done"
+PRINT "done yay yayyy"

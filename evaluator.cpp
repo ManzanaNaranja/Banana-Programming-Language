@@ -37,6 +37,11 @@ void Evaluator::createVariable(string name, Token* data) {
 }
 
 void Evaluator::createVariable(string name, Variable* v) {
+    auto obj = vars.find(name);
+    if(obj != vars.end() ) { // exists already
+        delete obj->second;
+        vars.erase(name); 
+    }
     vars.insert(make_pair(name, v));
 }
 
@@ -49,6 +54,26 @@ Variable* Evaluator::getVariable(string name) {
     }
 }
 
+void Evaluator::createVariableGenericRHS(string lhs, string rhs) {
+    Variable *v = getVariable(rhs);
+    string data = v->toString();
+    VarType type = v->getType();
+    Token *t = new Token(data, type);
+    createVariable(lhs, t);
+    delete t;
+    delete v;
+}
+
+int Evaluator::getIntFromToken(Token* t) {
+    if(t->type == avar) {
+        Variable *v = getVariable(t->contents);
+        IntVariable *iv = dynamic_cast<IntVariable*>(v);
+        return iv->data;
+    } else {
+        return stoi(t->contents);
+    }
+}
+
 void Evaluator::evaluate(vector<vector<Token*>> data, unordered_map<int, LineInfo*> programInfo) {
 
     unsigned line = 0;
@@ -56,10 +81,34 @@ void Evaluator::evaluate(vector<vector<Token*>> data, unordered_map<int, LineInf
         vector<Token*> curr = data.at(line);
         string cmd = curr.at(0)->contents;
         if(cmd == "LET") {
-            createVariable(curr.at(1)->contents, curr.at(3));
-        } else if(curr.size() == 3 && curr.at(1)->contents == "=") {
+            if(curr.at(3)->type != avar) {
+                createVariable(curr.at(1)->contents, curr.at(3));
+            } else {
+                createVariableGenericRHS(curr.at(1)->contents, curr.at(3)->contents);
+            }
+        } else if(curr.size() >= 3 && curr.at(1)->contents == "=") {
             // need to check if rhs is an expression to evaluate
-            createVariable(curr.at(0)->contents, curr.at(2));
+            if(curr.at(2)->type != avar) {
+                createVariable(curr.at(0)->contents, curr.at(2));
+            } else {
+                if(curr.size() == 5) {
+                    int rhs, lhs;
+                    lhs = getIntFromToken(curr.at(2));
+                    rhs = getIntFromToken(curr.at(4));
+                    if(curr.at(3)->contents == "+") {
+                        createVariable(curr.at(0)->contents, new IntVariable(rhs+lhs));
+                    } else if(curr.at(3)->contents == "-") {
+                        createVariable(curr.at(0)->contents, new IntVariable(lhs-rhs));
+                    } else if(curr.at(3)->contents == "*") {
+                        createVariable(curr.at(0)->contents, new IntVariable(lhs*rhs));
+                    } else if(curr.at(3)->contents == "/") {
+                        createVariable(curr.at(0)->contents, new IntVariable(lhs/rhs));
+                    }
+                } else {
+                    createVariableGenericRHS(curr.at(0)->contents, curr.at(2)->contents);
+                }
+               
+            }
         } else if(cmd == "PRINT") {
           // need to add check if rhs is expression to evaluate
           Token* t = curr.at(1);
@@ -71,6 +120,19 @@ void Evaluator::evaluate(vector<vector<Token*>> data, unordered_map<int, LineInf
               Variable* v = getVariable(t->contents);
               cout << v->toString();
           }
+         } else if(curr.size() >= 2 && curr.at(1)->contents == "+=") {
+            int rhs;
+            if(curr.at(2)->type == avar) {
+                Variable *v = getVariable(curr.at(2)->contents);
+                IntVariable *n = dynamic_cast<IntVariable*>(v);
+                rhs = n->data;
+            } else if(curr.at(2)->type == aint) {
+                rhs = stoi(curr.at(2)->contents);
+            }
+            Variable *v = getVariable(curr.at(0)->contents);
+            IntVariable *n = dynamic_cast<IntVariable*>(v);
+            n->data += rhs;
+
         } else if(cmd == "FOR") {
             auto obj = vars.find(curr.at(1)->contents);
             int lhs, rhs;

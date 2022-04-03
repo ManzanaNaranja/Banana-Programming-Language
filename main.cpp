@@ -20,7 +20,7 @@ void Test_Regex(string, string);
 int main() {
    // Test_Evaluate();
     // Test_Variable();
-   // Test_Lexer();
+    // Test_Lexer();
  //   Test_Regex("145681", "^0$|^[1-9][0-9]*$");
  //   Test_Regex("a", "[A-Za-z]");
   //  Test_Parser();
@@ -54,15 +54,20 @@ void Test_Parser() {
 
 void Test_Lexer() {
     Lexer l;
-    vector<vector<Token*>> tl = l.getTokens("input.txt");
-    cout << tl.size();
-    for(int i = 0; i < tl.size(); i++) {
-        vector<Token*> e = tl.at(i);
-        for(int j = 0; j < e.size(); j++) {
-            cout << "[" << e.at(j)->contents << " " << e.at(j)->type << "] ";
-        }
-        cout << endl;
+    // vector<vector<Token*>> tl = l.getTokens("input.txt");
+    // cout << tl.size();
+    // for(int i = 0; i < tl.size(); i++) {
+    //     vector<Token*> e = tl.at(i);
+    //     for(int j = 0; j < e.size(); j++) {
+    //         cout << "[" << e.at(j)->contents << " " << e.at(j)->type << "] ";
+    //     }
+    //     cout << endl;
+    // }
+    vector<string> s = l.getStrings("assdf df\"banana\"sd fsdf\"apple\" sdf");
+    for(int i = 0; i < s.size(); i++) {
+        cout << s.at(i) << endl;
     }
+    cout << "done";
 
 }
 
@@ -83,7 +88,7 @@ void Test_Evaluate() {
     Lexer l;
     Parser p;
     Evaluator e;
-    vector<vector<Token*>> tokenList = l.getTokens("input.txt");
+    vector<vector<Token*>> tokenList = l.getTokens("input4.txt");
     unordered_map<int, LineInfo*> programInfo = p.parse(tokenList);
    
     e.evaluate(tokenList, programInfo);

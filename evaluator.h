@@ -14,7 +14,9 @@ class Evaluator {
         unordered_map<string, Variable*> vars;
     public: 
         void createVariable(string name, Token* data);
-        void createVariable(string, Variable*);
+        void createVariable(string, Variable*); 
+        void createVariableGenericRHS(string, string); // grabs rhs var and assigns left var to it
         Variable* getVariable(string name);
         void deleteVariable(string name);
+        int getIntFromToken(Token*);
 };

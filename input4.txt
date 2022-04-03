@@ -2,12 +2,10 @@ LET N = 24
 a = 0
 b = 1
 sum = 0
-count = 1
 PRINT "Fib series: "
 FOR I = 0 TO 24 
 PRINT sum 
-print " "
-count += 1
+PRINT LINE
 a = b 
 b = sum 
 sum = a + b 
