@@ -1,0 +1,6 @@
+C = 'R'
+PRINT C
+PRINT LINE
+PRINT 3
+PRINT LINE
+PRINT "done :)"

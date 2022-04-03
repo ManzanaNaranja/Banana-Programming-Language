@@ -1,0 +1,14 @@
+INPUT "Enter number of digits for the sequence" N 
+LET a = 0
+b= 1
+sum = 0
+count=1
+PRINT "Fib series: "
+WHILE count <= N
+print sum 
+print " "
+count += 1
+a = b 
+b = sum 
+sum = a + b 
+END WHILE
