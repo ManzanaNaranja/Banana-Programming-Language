@@ -1,5 +1,5 @@
 # Banana-Programming-Language
-If the word "banana" doesn't show up enough in your code, it won't execute
+##If the word "banana" doesn't show up enough in your code, it won't execute
 
 you can do stuff like this
 
