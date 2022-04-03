@@ -83,7 +83,7 @@ void Test_Evaluate() {
     Lexer l;
     Parser p;
     Evaluator e;
-    vector<vector<Token*>> tokenList = l.getTokens("input3.txt");
+    vector<vector<Token*>> tokenList = l.getTokens("input.txt");
     unordered_map<int, LineInfo*> programInfo = p.parse(tokenList);
    
     e.evaluate(tokenList, programInfo);

@@ -1,9 +1,10 @@
-LET C = True
+LET C = 5
 LET Q = 'y'
-FOR A=0 TO 3
-FOR B=0 TO 3
+FOR A = 0 TO C
+FOR B = 0 TO 3
 PRINT B
 NEXT
+PRINT LINE
 PRINT A
 NEXT
-PRINT "asdflkasdjf asdf asdf  eieiieie e"
+PRINT "done"

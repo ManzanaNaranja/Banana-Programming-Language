@@ -10,6 +10,13 @@ Evaluator::Evaluator() {
 
 }
 
+void Evaluator::deleteVariable(string name) {
+    auto obj = vars.find(name);
+    if(obj != vars.end() ) { 
+        delete obj->second;
+        vars.erase(name); 
+    }
+}
 void Evaluator::createVariable(string name, Token* data) {
     auto obj = vars.find(name);
     if(obj != vars.end() ) { // exists already
@@ -27,6 +34,10 @@ void Evaluator::createVariable(string name, Token* data) {
         var = new CharVariable(data->contents.at(0));
     }
     vars.insert(make_pair(name, var));
+}
+
+void Evaluator::createVariable(string name, Variable* v) {
+    vars.insert(make_pair(name, v));
 }
 
 Variable* Evaluator::getVariable(string name) {
@@ -60,6 +71,46 @@ void Evaluator::evaluate(vector<vector<Token*>> data, unordered_map<int, LineInf
               Variable* v = getVariable(t->contents);
               cout << v->toString();
           }
+        } else if(cmd == "FOR") {
+            auto obj = vars.find(curr.at(1)->contents);
+            int lhs, rhs;
+            if(obj == vars.end()) { // if var doesn't exist
+                if(curr.at(3)->type == aint) {
+                    createVariable(curr.at(1)->contents, curr.at(3));
+                    lhs = stoi(curr.at(3)->contents);
+                } else if(curr.at(3)->type == avar) {
+                    Variable *v = getVariable(curr.at(3)->contents);
+                    IntVariable *n = dynamic_cast<IntVariable*>(v);
+                    createVariable(curr.at(1)->contents, n);
+                    lhs = n->data;
+                } else {
+                    cout << "ERR LINE 77 EVAL.cpp" <<endl;
+                }
+             
+            } else {
+                IntVariable *n = dynamic_cast<IntVariable*>(obj->second);
+                n->data++;
+                lhs = n->data;
+            }
+            if(curr.at(5)->type == avar) {
+                Variable *v = getVariable(curr.at(5)->contents);
+                IntVariable *n = dynamic_cast<IntVariable*>(v);
+                rhs = n->data;
+            } else {
+                rhs = stoi(curr.at(5)->contents);
+            }
+            
+            if(lhs < rhs) {
+                line++;
+                continue;
+            } else {
+                deleteVariable(curr.at(1)->contents);
+                line = programInfo.at(line)->goto_line;
+                continue;
+            }
+        } else if(cmd == "NEXT") {
+            line = programInfo.at(line)->goto_line;
+            continue;
         }
         line++;
     }
